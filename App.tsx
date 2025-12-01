@@ -93,15 +93,13 @@ const App: React.FC = () => {
     setIsCalculating(true);
     setProgress(0);
     
-    // Reset result briefly to trigger re-render animations if needed, 
-    // but usually better to keep old result until new one is ready or just update.
-    // We'll keep old result visible until new one replaces it to avoid flicker,
-    // or clear it if we want to force focus on the loader.
-    // setResult(null); 
-
     // Update URL
-    const encoded = btoa(JSON.stringify(inputs));
-    window.history.replaceState(null, '', `?data=${encoded}`);
+    try {
+      const encoded = btoa(JSON.stringify(inputs));
+      window.history.replaceState(null, '', `?data=${encoded}`);
+    } catch (e) {
+      console.error('Failed to update URL state', e);
+    }
 
     // Faster Simulation
     const interval = setInterval(() => {
@@ -117,18 +115,24 @@ const App: React.FC = () => {
     // Reduced timeout for snappier feel
     setTimeout(() => {
       clearInterval(interval);
-      const data = calculateCompoundInterest(inputs);
-      setResult(data);
-      setIsCalculating(false);
-      setProgress(100);
-      addToHistory(inputs, data.finalBalance);
-      
-      // Auto scroll to results
-      setTimeout(() => {
-         if (resultsRef.current) {
-            resultsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-         }
-      }, 100);
+      try {
+        const data = calculateCompoundInterest(inputs);
+        setResult(data);
+        addToHistory(inputs, data.finalBalance);
+        
+        // Auto scroll to results
+        setTimeout(() => {
+           if (resultsRef.current) {
+              resultsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+           }
+        }, 100);
+      } catch (error) {
+        console.error("Calculation failed:", error);
+        alert("An error occurred during calculation. Please check your inputs.");
+      } finally {
+        setIsCalculating(false);
+        setProgress(100);
+      }
     }, 400); // 400ms delay
 
   }, [inputs, history]);

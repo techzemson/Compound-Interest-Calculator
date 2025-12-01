@@ -1,5 +1,5 @@
 import React from 'react';
-import { HistoryItem, CURRENCIES } from '../types';
+import { HistoryItem } from '../types';
 import { XMarkIcon, ClockIcon, ArrowUturnLeftIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { formatCurrency } from '../services/calculatorService';
 
