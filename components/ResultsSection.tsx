@@ -5,7 +5,7 @@ import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
   PieChart, Pie, Cell, Legend, ReferenceLine
 } from 'recharts';
-import { ArrowDownTrayIcon, ShareIcon, PrinterIcon, CheckBadgeIcon } from '@heroicons/react/24/outline';
+import { ArrowDownTrayIcon, CheckBadgeIcon } from '@heroicons/react/24/outline';
 
 interface Props {
   data: CalculationResult;
@@ -51,17 +51,6 @@ const ResultsSection: React.FC<Props> = ({ data, currency, years }) => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-  };
-
-  const handlePrint = () => {
-    window.print();
-  };
-
-  const handleShare = () => {
-    const url = window.location.href;
-    navigator.clipboard.writeText(url).then(() => {
-        alert('Link copied to clipboard!');
-    });
   };
 
   return (
@@ -119,22 +108,30 @@ const ResultsSection: React.FC<Props> = ({ data, currency, years }) => {
          <div className="bg-slate-50 dark:bg-slate-700/50 p-4 rounded-xl border border-slate-100 dark:border-slate-700 text-center">
              <p className="text-xs text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider">Rule of 72</p>
              <p className="text-xl font-bold text-slate-800 dark:text-white mt-1">{data.doublingTime.toFixed(1)} Yrs</p>
-             <p className="text-[10px] text-slate-400">Time to double money</p>
+             <div className="mt-2 inline-flex items-center justify-center bg-blue-100 dark:bg-blue-900/30 px-2 py-0.5 rounded-full">
+               <p className="text-[10px] font-bold text-blue-700 dark:text-blue-300">Time to double money</p>
+             </div>
          </div>
          <div className="bg-slate-50 dark:bg-slate-700/50 p-4 rounded-xl border border-slate-100 dark:border-slate-700 text-center">
              <p className="text-xs text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider">Multiplier</p>
              <p className="text-xl font-bold text-slate-800 dark:text-white mt-1">{data.multiplier.toFixed(2)}x</p>
-             <p className="text-[10px] text-slate-400">Total ROI</p>
+             <div className="mt-2 inline-flex items-center justify-center bg-emerald-100 dark:bg-emerald-900/30 px-2 py-0.5 rounded-full">
+                <p className="text-[10px] font-bold text-emerald-700 dark:text-emerald-300">Total ROI</p>
+             </div>
          </div>
           <div className="bg-slate-50 dark:bg-slate-700/50 p-4 rounded-xl border border-slate-100 dark:border-slate-700 text-center">
              <p className="text-xs text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider">Eff. Rate</p>
              <p className="text-xl font-bold text-slate-800 dark:text-white mt-1">{(data.totalInterest / data.totalDeposits * 100).toFixed(0)}%</p>
-             <p className="text-[10px] text-slate-400">Total Return %</p>
+             <div className="mt-2 inline-flex items-center justify-center bg-purple-100 dark:bg-purple-900/30 px-2 py-0.5 rounded-full">
+                <p className="text-[10px] font-bold text-purple-700 dark:text-purple-300">Total Return %</p>
+             </div>
          </div>
           <div className="bg-slate-50 dark:bg-slate-700/50 p-4 rounded-xl border border-slate-100 dark:border-slate-700 text-center">
              <p className="text-xs text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider">Tax Paid</p>
              <p className="text-xl font-bold text-red-500 mt-1">{formatMoney(data.totalTax)}</p>
-             <p className="text-[10px] text-slate-400">Estimated Tax</p>
+             <div className="mt-2 inline-flex items-center justify-center bg-red-100 dark:bg-red-900/30 px-2 py-0.5 rounded-full">
+                <p className="text-[10px] font-bold text-red-700 dark:text-red-300">Estimated Tax</p>
+             </div>
          </div>
       </div>
 
@@ -225,18 +222,6 @@ const ResultsSection: React.FC<Props> = ({ data, currency, years }) => {
         <div className="p-6 flex flex-col md:flex-row justify-between items-center border-b border-slate-100 dark:border-slate-700 gap-4">
           <h4 className="text-lg font-bold text-slate-800 dark:text-white">Yearly Breakdown</h4>
           <div className="flex gap-2 print:hidden">
-            <button 
-                onClick={handleShare}
-                className="flex items-center gap-2 text-sm font-semibold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 px-4 py-2 rounded-lg transition-colors"
-            >
-                <ShareIcon className="w-4 h-4" /> Share
-            </button>
-            <button 
-                onClick={handlePrint}
-                className="flex items-center gap-2 text-sm font-semibold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 px-4 py-2 rounded-lg transition-colors"
-            >
-                <PrinterIcon className="w-4 h-4" /> Print
-            </button>
             <button 
                 onClick={downloadCSV}
                 className="flex items-center gap-2 text-sm font-semibold text-blue-600 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/30 dark:hover:bg-blue-900/50 px-4 py-2 rounded-lg transition-colors"
