@@ -92,38 +92,46 @@ const App: React.FC = () => {
   const handleCalculate = useCallback(() => {
     setIsCalculating(true);
     setProgress(0);
-    setResult(null);
+    
+    // Reset result briefly to trigger re-render animations if needed, 
+    // but usually better to keep old result until new one is ready or just update.
+    // We'll keep old result visible until new one replaces it to avoid flicker,
+    // or clear it if we want to force focus on the loader.
+    // setResult(null); 
 
     // Update URL
     const encoded = btoa(JSON.stringify(inputs));
     window.history.replaceState(null, '', `?data=${encoded}`);
 
-    // Simulation
+    // Faster Simulation
     const interval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
           clearInterval(interval);
           return 100;
         }
-        return prev + 5; 
+        return prev + 10; // Faster increment
       });
-    }, 40); 
+    }, 30); // Faster interval
 
+    // Reduced timeout for snappier feel
     setTimeout(() => {
+      clearInterval(interval);
       const data = calculateCompoundInterest(inputs);
       setResult(data);
       setIsCalculating(false);
-      setProgress(0);
+      setProgress(100);
       addToHistory(inputs, data.finalBalance);
-    }, 1000);
+      
+      // Auto scroll to results
+      setTimeout(() => {
+         if (resultsRef.current) {
+            resultsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+         }
+      }, 100);
+    }, 400); // 400ms delay
 
   }, [inputs, history]);
-
-  useEffect(() => {
-    if (result && resultsRef.current) {
-        resultsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  }, [result]);
 
   return (
     <div className={`min-h-screen pb-20 transition-colors duration-300 ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}>
@@ -143,15 +151,16 @@ const App: React.FC = () => {
           <div className="flex items-center gap-2">
             <button 
                 onClick={() => setShowHistory(true)}
-                className="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors relative"
-                title="History"
+                className="flex items-center gap-2 px-4 py-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors relative font-medium"
             >
-                <ClockIcon className="w-6 h-6" />
-                {history.length > 0 && <span className="absolute top-1 right-1 w-2 h-2 bg-blue-500 rounded-full"></span>}
+                <ClockIcon className="w-5 h-5" />
+                <span>History</span>
+                {history.length > 0 && <span className="absolute top-2 left-7 w-2 h-2 bg-blue-500 rounded-full border border-white dark:border-slate-800"></span>}
             </button>
             <button 
                 onClick={() => setDarkMode(!darkMode)}
                 className="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
+                aria-label="Toggle Dark Mode"
             >
                 {darkMode ? <SunIcon className="w-6 h-6 text-yellow-400" /> : <MoonIcon className="w-6 h-6 text-slate-600" />}
             </button>

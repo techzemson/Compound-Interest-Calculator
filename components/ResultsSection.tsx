@@ -20,7 +20,7 @@ const ResultsSection: React.FC<Props> = ({ data, currency, years }) => {
   const formatMoney = (val: number) => formatCurrency(val, currency);
 
   const pieData = [
-    { name: 'Total Deposits', value: data.totalDeposits, color: '#3b82f6' }, // blue-500
+    { name: 'Total Invested', value: data.totalDeposits, color: '#3b82f6' }, // blue-500
     { name: 'Total Interest', value: data.totalInterest, color: '#10b981' }, // emerald-500
   ];
   
@@ -29,11 +29,12 @@ const ResultsSection: React.FC<Props> = ({ data, currency, years }) => {
   }
 
   const downloadCSV = () => {
-    const headers = ['Year', 'Principal', 'Contributions', 'Total Interest', 'Balance', 'Inflation Adjusted'];
+    const headers = ['Year', 'Principal', 'Contributions', 'Total Invested', 'Total Interest', 'Balance', 'Inflation Adjusted'];
     const rows = data.yearlyBreakdown.map(row => [
       row.year,
       row.principal.toFixed(2),
       row.contributions.toFixed(2),
+      (row.principal + row.contributions).toFixed(2),
       row.interest.toFixed(2),
       row.totalBalance.toFixed(2),
       row.inflationAdjusted.toFixed(2)
@@ -105,7 +106,7 @@ const ResultsSection: React.FC<Props> = ({ data, currency, years }) => {
         </div>
 
         <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-md border border-slate-100 dark:border-slate-700">
-          <p className="text-slate-500 dark:text-slate-400 text-sm font-medium mb-1">Total Deposits</p>
+          <p className="text-slate-500 dark:text-slate-400 text-sm font-medium mb-1">Total Invested</p>
           <h3 className="text-3xl font-bold text-slate-700 dark:text-slate-200">{formatMoney(data.totalDeposits)}</h3>
           <div className="w-full bg-slate-100 dark:bg-slate-700 h-1.5 mt-4 rounded-full overflow-hidden">
             <div className="bg-blue-500 h-full" style={{ width: `${(data.totalDeposits / data.finalBalance) * 100}%` }}></div>
@@ -249,7 +250,7 @@ const ResultsSection: React.FC<Props> = ({ data, currency, years }) => {
             <thead className="bg-slate-50 dark:bg-slate-700/50 text-slate-800 dark:text-white font-semibold">
               <tr>
                 <th className="p-4">Year</th>
-                <th className="p-4">Deposits</th>
+                <th className="p-4">Total Invested</th>
                 <th className="p-4">Interest</th>
                 <th className="p-4">Balance</th>
                 <th className="p-4 text-slate-400">Real Value (Inflation)</th>
